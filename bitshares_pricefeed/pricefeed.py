@@ -355,6 +355,7 @@ class Feed(object):
         ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
         dex_price = float(ticker["latest"])
         settlement_price = float(ticker['baseSettlement_price'])
+        print("%s Dex price %s" % (symbol, dex_price))
         premium = (real_price / dex_price) - 1
         details = self.get_premium_details('BIT{}'.format(symbol), symbol, dex_price)
 
@@ -363,8 +364,20 @@ class Feed(object):
         adjusted_price = real_price
         if target_price_algorithm == 'adjusted_feed_price':
             # Kudos to Abit: https://bitsharestalk.org/index.php?topic=26315.msg322091#msg322091
-            adjustment_scale = self.assetconf(symbol, "target_price_adjustment_scale")
+            # Adjust scale depending of premium/discount:
+            #   https://bitsharestalk.org/index.php?topic=26881.msg323402#msg323402
+            if premium > 0:
+                adjustment_scale = self.assetconf(symbol, "target_price_adjustment_scale_at_premium", no_fail=True)
+                print('Adjustement scale at premium: {}'.format(adjustment_scale))
+                if adjustment_scale == None:
+                    adjustment_scale = self.assetconf(symbol, "target_price_adjustment_scale")
+            else:
+                adjustment_scale = self.assetconf(symbol, "target_price_adjustment_scale_at_discount", no_fail=True)
+                print('Adjustement scale at discount: {}'.format(adjustment_scale))
+                if adjustment_scale == None:
+                    adjustment_scale = self.assetconf(symbol, "target_price_adjustment_scale")
             adjusted_price = settlement_price * (1 + premium * adjustment_scale)
+
         elif target_price_algorithm == 'adjusted_real_price_empowered':
             # Kudos to Abit: https://bitsharestalk.org/index.php?topic=26315.msg321699#msg321699
             # Kudos to gghi: https://bitsharestalk.org/index.php?topic=26839.msg321863#msg321863
@@ -423,7 +436,6 @@ class Feed(object):
 
             print('{} PID info: adjustment={}, pid={} (p={}, i={}, d={}), safe={}'.format(symbol, adjustement, pid_adjustment, p, i, d, safe_feed_adjustment))
             self.save_pid_data(historic_file, premium, i)
-
 
         return (premium, adjusted_price, details)
 

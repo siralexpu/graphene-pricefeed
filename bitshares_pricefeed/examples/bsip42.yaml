@@ -199,6 +199,10 @@ assets:
         #        mandatory additional settings: 
         #          - `target_price_adjustment_scale`: arbitrary adjustment to apply, 
         #                 acceptable value are between 0.8 and 1.2.
+        #          - `target_price_adjustment_scale_at_premium`: use a different adjustement when 
+        #                 there is premium real_price > dex_price.
+        #          - `target_price_adjustment_scale_at_discount`: use a different adjustement when 
+        #                 there is discount real_price < dex_price.
         #
         #   - 'adjusted_real_price_empowered': 
         #        formula: real_price * pow(1 + premium + theorical_premium, acceleration_factor)
@@ -232,7 +236,9 @@ assets:
         #           - `target_price_pid_integral_adjustment_max`: max value for integral part of the PID adjustment. 
         #           - `target_price_pid_integral_adjustment_min`: min value for integral part of the PID adjustment. 
 
-        target_price_algorithm: 'adjusted_dex_price_using_buckets' 
+        target_price_algorithm: 'adjusted_feed_price'
+        target_price_adjustment_scale_at_discount: 0.5
+        target_price_adjustment_scale_at_premium: 1
 
 # Intermediate assets are useful for 2 and 3 market price derivation
 # E.g.: USD:BTC -> BTC:BTS = USD:BTS
