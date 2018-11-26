@@ -20,4 +20,3 @@ class Kraken(FeedSource):
                 self.add_rate(feed, base, quote, float(result['c'][0]), float(result['v'][1]))
         
         return feed
-
