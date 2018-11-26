@@ -116,6 +116,27 @@ class Feed(object):
         feed_age = self.price_result[symbol]["current_feed"]["date"] if self.price_result[symbol]["current_feed"] else datetime.min.replace(tzinfo=timezone.utc)
         if (datetime.now(timezone.utc) - feed_age).total_seconds() > self.assetconf(symbol, "maxage"):
             self.price_result[symbol]["flags"].append("over_max_age")
+    
+    def compute_global_settlement_price(self, asset):
+        calls = asset.get_call_orders(1)
+        lowest_call = calls[0]
+        return Price(lowest_call['collateral'], lowest_call['debt'])
+
+    def protect_against_global_settlement(self, symbol, price, asset):
+        is_global_settled = bool(int(asset['bitasset_data']['settlement_fund']) != 0)
+        global_settlement_protection = self.assetconf(symbol, "global_settlement_protection", no_fail=True)
+        if not global_settlement_protection or is_global_settled:
+            return price
+
+        global_settlement_price = float(self.compute_global_settlement_price(asset).as_base(symbol))
+        mssr = self.assetconf(symbol, "maximum_short_squeeze_ratio")
+        min_safe_price = global_settlement_price * ((mssr + global_settlement_protection) / 100.0)
+        if price <  min_safe_price:
+            print('WARN: {} is protected from global settlement, current price ({}) < minimum safe price ({} * ({} + {}) % 100 = {}).'.format(symbol, price, global_settlement_price, mssr, global_settlement_protection, min_safe_price))
+            price = min_safe_price
+
+        return price
+
 
     def get_cer(self, symbol, price, asset):
         if self.assethasconf(symbol, "core_exchange_rate"):
@@ -355,7 +376,6 @@ class Feed(object):
         ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
         dex_price = float(ticker["latest"])
         settlement_price = float(ticker['baseSettlement_price'])
-        print("%s Dex price %s" % (symbol, dex_price))
         premium = (real_price / dex_price) - 1
         details = self.get_premium_details('BIT{}'.format(symbol), symbol, dex_price)
 
@@ -499,6 +519,8 @@ class Feed(object):
             ))
 
         (premium, target_price, details) = self.compute_target_price(symbol, backing_symbol, p)
+
+        target_price = self.protect_against_global_settlement(symbol, target_price, asset)
 
         cer = self.get_cer(symbol, target_price, asset)
 

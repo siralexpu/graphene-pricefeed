@@ -184,6 +184,15 @@ default:
     # E.g.: GOLD:USD -> USD:BTC -> BTC:BTS = GOLD:BTS
     derive_across_3markets: True
 
+    # Activate the global settlement protection and the percentage of protection.
+    # If price to publish goes below global settlement price,
+    # use global_settlement_price * (maximum short squeeze ratio + global_settlement_protection) / 100 as feed price. 
+    # This could be used with BSIP42 as margin calls are not eaten fast enough and global
+    # settlement triggered on a short deep.
+    # Default is None.
+    global_settlement_protection: 2
+    
+
 
 # Enabled assets that are derived if no asset is provided via command
 # line
