@@ -371,8 +371,8 @@ class Feed(object):
             json.dump({'premium': premium, 'i': i}, outfile)
     
     # Cf BSIP-42: https://github.com/bitshares/bsips/blob/master/bsip-0042.md
-    def compute_target_price(self, symbol, backing_symbol, real_price):
-        
+    def compute_target_price(self, symbol, backing_symbol, real_price, asset):
+
         ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
         dex_price = float(ticker["latest"])
         settlement_price = float(ticker['baseSettlement_price'])
@@ -380,8 +380,14 @@ class Feed(object):
         details = self.get_premium_details('BIT{}'.format(symbol), symbol, dex_price)
 
         target_price_algorithm = self.assetconf(symbol, "target_price_algorithm", no_fail=True)
-        
+
         adjusted_price = real_price
+
+        is_global_settled = bool(int(asset['bitasset_data']['settlement_fund']) != 0)
+        if is_global_settled and target_price_algorithm:
+            print('WARN: {} is globally settled, deactivating target price feature (BSIP42).'.format(symbol))
+            return (premium, adjusted_price, details)
+
         if target_price_algorithm == 'adjusted_feed_price':
             # Kudos to Abit: https://bitsharestalk.org/index.php?topic=26315.msg322091#msg322091
             # Adjust scale depending of premium/discount:
@@ -518,7 +524,7 @@ class Feed(object):
                 metric
             ))
 
-        (premium, target_price, details) = self.compute_target_price(symbol, backing_symbol, p)
+        (premium, target_price, details) = self.compute_target_price(symbol, backing_symbol, p, asset)
 
         target_price = self.protect_against_global_settlement(symbol, target_price, asset)
 
