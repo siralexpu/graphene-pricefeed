@@ -376,7 +376,7 @@ class Feed(object):
         ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
         dex_price = float(ticker["latest"])
         settlement_price = float(ticker['baseSettlement_price'])
-        premium = (real_price / dex_price) - 1
+        premium = (real_price / dex_price) - 1 if dex_price != 0.0 else 0.0
         details = self.get_premium_details('BIT{}'.format(symbol), symbol, dex_price)
 
         target_price_algorithm = self.assetconf(symbol, "target_price_algorithm", no_fail=True)

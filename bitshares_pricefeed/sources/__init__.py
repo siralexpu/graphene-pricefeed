@@ -31,6 +31,7 @@ from .composite import Composite
 from .cointiger import CoinTiger
 from .magicwallet import MagicWallet
 from .hertz import Hertz
+from .norm import Norm
 from .hero import Hero
 from .kraken import Kraken
 from .coinbase import Coinbase
