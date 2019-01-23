@@ -28,7 +28,7 @@ class Norm(FeedSource):
             period,
             SECONDS_PER_DAY * 0 # phase offset
             )
-        self.add_rate(feed, 'URTHR', 'BTS', urthr_value, 1.0)
+        self.add_rate(feed, 'BTS', 'URTHR', urthr_value, 1.0)
 
         verthandi_value = self._norn_feed(
             amplitude,
@@ -37,7 +37,7 @@ class Norm(FeedSource):
             period,
             SECONDS_PER_DAY * 9.33 # phase offset
             )
-        self.add_rate(feed, 'VERTHANDI', 'BTS', verthandi_value, 1.0)
+        self.add_rate(feed, 'BTS', 'VERTHANDI', verthandi_value, 1.0)
 
         skuld_value = self._norn_feed(
             amplitude,
@@ -46,6 +46,6 @@ class Norm(FeedSource):
             period,
             SECONDS_PER_DAY * 18.66 # phase offset
             )
-        self.add_rate(feed, 'SKULD', 'BTS', skuld_value, 1.0)
+        self.add_rate(feed, 'BTS', 'SKULD', skuld_value, 1.0)
 
         return feed
