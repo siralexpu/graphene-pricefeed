@@ -18,7 +18,7 @@ class Norm(FeedSource):
 
         reference_timestamp = datetime.strptime("2015-10-13T14:12:24", "%Y-%m-%dT%H:%M:%S").timestamp() # Bitshares 2.0 genesis block timestamp
         current_timestamp = datetime.now().timestamp() # Current timestamp for reference within the script
-        amplitude = 0.12612612612
+        amplitude = 0.05303030303
         period = SECONDS_PER_DAY * 28
 
         urthr_value = self._norn_feed(
