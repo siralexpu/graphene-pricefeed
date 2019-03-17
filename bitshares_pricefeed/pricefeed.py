@@ -462,6 +462,17 @@ class Feed(object):
 
             print('{} PID info: adjustment={}, pid={} (p={}, i={}, d={}), safe={}'.format(symbol, adjustement, pid_adjustment, p, i, d, safe_feed_adjustment))
             self.save_pid_data(historic_file, premium, i)
+        elif target_price_algorithm == 'limit_price_rise':
+            # If price of BACKING_ASSET/ASSET rises too high, limit price movement to defined %
+            current_feed = self.get_my_current_feed(asset)
+            target_price_lpr_max_diff = self.assetconf(symbol, "target_price_lpr_max_diff")
+
+            if current_feed and "settlement_price" in current_feed:
+                old_price = float(current_feed["settlement_price"])
+                # It is supposed we're operating on "quotes: ASSET", "bases: BACKING_ASSET", thus real_price is
+                # ASSET/BACKING_ASSET (Example: 10 FOO per 1 BTS), so we're limiting price movement when FOO value
+                # rises.
+                adjusted_price = max(real_price, old_price / (1 + target_price_lpr_max_diff))
 
         return (premium, adjusted_price, details)
 
