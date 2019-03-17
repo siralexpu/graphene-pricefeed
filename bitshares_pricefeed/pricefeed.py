@@ -11,7 +11,7 @@ from bitshares.price import Price
 from bitshares.amount import Amount
 from bitshares.market import Market
 from bitshares.witness import Witness
-from bitshares.exceptions import AccountDoesNotExistsException
+from bitshares.exceptions import AccountDoesNotExistsException, WitnessDoesNotExistsException
 from datetime import datetime, date, timezone
 from . import sources
 import logging
@@ -50,7 +50,7 @@ class Feed(object):
             witness = Witness(self.config["producer"])
             global_properties = shared_bitshares_instance().rpc.get_global_properties()
             self.is_active_witness = bool(witness['id'] in global_properties['active_witnesses'])
-        except AccountDoesNotExistsException:
+        except (AccountDoesNotExistsException, WitnessDoesNotExistsException):
             self.is_active_witness = False
 
     def reset(self):
