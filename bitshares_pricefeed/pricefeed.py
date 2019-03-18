@@ -478,7 +478,9 @@ class Feed(object):
                 # It is supposed we're operating on "quotes: ASSET", "bases: BACKING_ASSET", thus real_price is
                 # ASSET/BACKING_ASSET (Example: 10 FOO per 1 BTS), so we're limiting price movement when FOO value
                 # rises.
-                adjusted_price = max(real_price, old_price / (1 + target_price_lpr_max_diff))
+                if not old_price == float("inf"):
+                    # When publishing price first time, bypass this adjustment
+                    adjusted_price = max(real_price, old_price / (1 + target_price_lpr_max_diff))
 
         return (premium, adjusted_price, details)
 
