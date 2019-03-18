@@ -372,10 +372,16 @@ class Feed(object):
     
     # Cf BSIP-42: https://github.com/bitshares/bsips/blob/master/bsip-0042.md
     def compute_target_price(self, symbol, backing_symbol, real_price, asset):
+        dex_price = 0
+        settlement_price = 0
+        try:
+            ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
+            dex_price = float(ticker["latest"])
+            settlement_price = float(ticker['baseSettlement_price'])
+        except ValueError:
+            # Happens when ticker data is empty, see https://github.com/xeroc/python-graphenelib/issues/87
+            pass
 
-        ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
-        dex_price = float(ticker["latest"])
-        settlement_price = float(ticker['baseSettlement_price'])
         premium = (real_price / dex_price) - 1 if dex_price != 0.0 else 0.0
         details = self.get_premium_details('BIT{}'.format(symbol), symbol, dex_price)
 
