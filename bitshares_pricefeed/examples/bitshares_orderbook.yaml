@@ -15,7 +15,8 @@ exchanges:
       - RUDEX.GOLOS
     aliases:
       XCHNG.VIZ: HERTZ
-    quote_volume: 1000
+    #quote_volume: 1000
+    depth_pct: 15
     mode: buy_support
     #mode: center_price
   bitshares:
