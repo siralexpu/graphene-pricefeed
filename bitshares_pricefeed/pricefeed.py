@@ -280,11 +280,16 @@ class Feed(object):
                             sources=[self.get_source_description(datasource, quote, base, feed_data)]
                         )
 
-    def derive2Markets(self, base_symbol, target_symbol):
+    def derive2Markets(self, base_symbol, target_symbol, apply_volume_limit=False):
         """ derive BTS prices for all assets in assets_derive
             This loop adds prices going via 2 markets:
             E.g.: CNY:BTC -> BTC:BTS = CNY:BTS
             I.e.: BTS: interasset -> interasset: targetasset
+
+            :param str base_symbol:
+            :param str target_symbol:
+            :param bool apply_volume_limit: True = limit final volume by each conversion step
+                                            False = use volume of final step only
         """
         for interasset in self.config.get("intermediate_assets", []):
             if interasset == base_symbol:
@@ -296,22 +301,39 @@ class Feed(object):
                     for idx in range(0, len(self.data[interasset][target_symbol])):
                         if self.data[interasset][target_symbol][idx]["volume"] == 0:
                             continue
+
+                        # Price of base_symbol/target_symbol
+                        price = float(self.data[interasset][target_symbol][idx]["price"] * ratio["price"])
+                        # Volume of the last step, in target_symbol
+                        volume = float(self.data[interasset][target_symbol][idx]["volume"])
+                        if apply_volume_limit:
+                            volume = min(
+                                # Volume of interasset on base_symbol/interasset market (first step) transformed into
+                                # target_symbol equivalent
+                                ratio["volume"] / float(self.data[interasset][target_symbol][idx]["price"]),
+                                volume
+                            )
                         self.addPrice(
                             base_symbol,
                             target_symbol,
-                            float(self.data[interasset][target_symbol][idx]["price"] * ratio["price"]),
-                            float(self.data[interasset][target_symbol][idx]["volume"]),
+                            price,
+                            volume,
                             sources=[
                                 ratio["sources"],
                                 self.data[interasset][target_symbol][idx]["sources"]
                             ]
                         )
 
-    def derive3Markets(self, base_symbol, target_symbol):
+    def derive3Markets(self, base_symbol, target_symbol, apply_volume_limit=False):
         """ derive BTS prices for all assets in assets_derive
             This loop adds prices going via 3 markets:
             E.g.: GOLD:USD -> USD:BTC -> BTC:BTS = GOLD:BTS
             I.e.: BTS: interassetA -> interassetA: interassetB -> symbol: interassetB
+
+            :param str base_symbol:
+            :param str target_symbol:
+            :param bool apply_volume_limit: True = limit final volume by each conversion step
+                                            False = use volume of final step only
         """
         if "intermediate_assets" not in self.config or not self.config["intermediate_assets"]:
             return
@@ -335,11 +357,27 @@ class Feed(object):
                                 if self.data[interassetA][target_symbol][idx]["volume"] == 0:
                                     continue
                                 log.info("derive_across_3markets - found %s -> %s -> %s -> %s", base_symbol, interassetB, interassetA, target_symbol)
+                                price = float(
+                                    self.data[interassetA][target_symbol][idx]["price"] * ratioA["price"] * ratioB["price"]
+                                )
+                                volume = float(self.data[interassetA][target_symbol][idx]["volume"])
+                                if apply_volume_limit:
+                                    price_interassetB_to_target_symbol = float(
+                                        self.data[interassetA][target_symbol][idx]["price"] * ratioA["price"]
+                                    )
+                                    volume = min(
+                                        # Volume in interassetB transformed to volume in target_symbol
+                                        ratioB["volume"] / price_interassetB_to_target_symbol,
+                                        # Volume in interassetA transformed to volume in target_symbol
+                                        ratioA["volume"] / self.data[interassetA][target_symbol][idx]["price"],
+                                        # Volume in target_symbol, last step
+                                        self.data[interassetA][target_symbol][idx]["volume"]
+                                    )
                                 self.addPrice(
                                     base_symbol,
                                     target_symbol,
-                                    float(self.data[interassetA][target_symbol][idx]["price"] * ratioA["price"] * ratioB["price"]),
-                                    float(self.data[interassetA][target_symbol][idx]["volume"]),
+                                    price,
+                                    volume,
                                     sources=[
                                         ratioB["sources"],
                                         ratioA["sources"],
@@ -503,8 +541,11 @@ class Feed(object):
         # Fill in self.data
         self.appendOriginalPrices(symbol)
         log.info("Computed data (raw): \n{}".format(self.data))
-        self.derive2Markets(symbol, backing_symbol)
-        self.derive3Markets(symbol, backing_symbol)
+        apply_volume_limit = False
+        if self.assetconf(symbol, "derive_across_markets_apply_volume_limit", no_fail=True):
+            apply_volume_limit = True
+        self.derive2Markets(symbol, backing_symbol, apply_volume_limit=apply_volume_limit)
+        self.derive3Markets(symbol, backing_symbol, apply_volume_limit=apply_volume_limit)
         log.info("Computed data (after derivation): \n{}".format(self.data))
 
         if symbol not in self.data:
