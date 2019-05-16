@@ -5,7 +5,7 @@ from . import FeedSource, _request_headers
 class Zb(FeedSource):
     def _fetch(self):
         feed = {}
-        url = "http://api.zb.com/data/v1/ticker?market={quote}_{base}"
+        url = "http://api.zb.cn/data/v1/ticker?market={quote}_{base}"
         for base in self.bases:
             for quote in self.quotes:
                 if base == quote:
