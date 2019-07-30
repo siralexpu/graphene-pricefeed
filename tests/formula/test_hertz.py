@@ -1,6 +1,6 @@
 from bitshares_pricefeed.pricefeed import Feed
 
-config = 'bitshares_pricefeed/examples/hertz.yaml'
+config = 'examples/hertz.yaml'
 
 def test_hertz_computation(conf, checkers):
     feed = Feed(conf)

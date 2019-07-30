@@ -1,6 +1,6 @@
 from bitshares_pricefeed.pricefeed import Feed
 
-config = 'bitshares_pricefeed/examples/norm.yaml'
+config = 'examples/norm.yaml'
 
 def test_norm_computation(conf, checkers):
     feed = Feed(conf)

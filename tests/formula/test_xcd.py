@@ -1,6 +1,6 @@
 from bitshares_pricefeed.pricefeed import Feed
 
-config = 'bitshares_pricefeed/examples/XCD.yaml'
+config = 'examples/XCD.yaml'
 
 def test_XCD_computation(conf, checkers):
     feed = Feed(conf)
