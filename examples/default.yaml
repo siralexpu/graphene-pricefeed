@@ -31,6 +31,7 @@ exchanges:
     ####################################
     fixer:
         klass: Fixer
+        enable: False
         api_key: 
         free_subscription: True
         quotes:
@@ -60,6 +61,7 @@ exchanges:
             RUB: RUBLE
     openexchangerates:
         klass: OpenExchangeRates
+        enable: False
         api_key: 
         free_subscription: True
         quotes:
@@ -85,6 +87,7 @@ exchanges:
             - USD
     currencylayer:
         klass: CurrencyLayer
+        enable: False
         api_key: 
         free_subscription: True
         quotes:
@@ -115,7 +118,8 @@ exchanges:
     # Commodities
     ####################################
     quandl:
-        klass: Quandl 
+        klass: Quandl
+        enable: False
         api_key:
         datasets:
             "GOLD:USD": 
@@ -273,24 +277,24 @@ assets:
     USD:
     CNY:
         core_exchange_factor: 1.2
-    TRY:
-    RUBLE:
-    EUR:
-    AUD:
-    JPY:
-    CHF:
-    MXN:
-    GBP:
-    CAD:
-    ARS:
-    HKD:
-    SEK:
-    SGD:
-    NZD:
-    KRW:
-    RUB:
-    GOLD:
-    SILVER:
+    # TRY:
+    # RUBLE:
+    # EUR:
+    # AUD:
+    # JPY:
+    # CHF:
+    # MXN:
+    # GBP:
+    # CAD:
+    # ARS:
+    # HKD:
+    # SEK:
+    # SGD:
+    # NZD:
+    # KRW:
+    # RUB:
+    # GOLD:
+    # SILVER:
 
 # Intermediate assets are useful for 2 and 3 market price derivation
 # E.g.: USD:BTC -> BTC:BTS = USD:BTS
