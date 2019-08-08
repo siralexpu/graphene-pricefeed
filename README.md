@@ -141,25 +141,25 @@ BitsharesOrderbook | OK | Crypto | No | measure orderbook depth on Bitshares DEX
 Bitstamp | OK | Crypto | No | last and volume (in quote currency) from CEX ticker api
 Bittrex | OK | Crypto | No | last and volume (in quote currency) from summary api (bulk)
 Coinbase | OK | Crypto | No | Use Coinbase Pro (ex GDAX) ticker api to get last and 24h volume.
-Coincap | OK | ALTCAP & ALTCAP.X | No | use provided market cap, no volume
+Coincap | Fails, to be fixed  | ALTCAP & ALTCAP.X | No | use provided market cap, no volume
 CoinEgg | OK | Crypto |No | last and volume (in quote currency) from CEX ticker api
 Coinmarketcap | Warn | Crypto | No | volume weighted average of all prices reported at each market, volume in USD, 5 minutes delay (see https://coinmarketcap.com/faq/). V1 API will be closed December 4th, 2018. 
 CoinmarketcapPro | OK | Crypto | Yes | volume weighted average of all prices reported at each market, volume in quote, 1 minutes delay. Use v2 api.
-Currencylayer | OK | FIAT, BTC | Yes | ticker from api, only USD as base and hourly updated with free subscription, no volume info. From various source (https://currencylayer.com/faq)
+Currencylayer | Fails, to be fixed | FIAT, BTC | Yes | ticker from api, only USD as base and hourly updated with free subscription, no volume info. From various source (https://currencylayer.com/faq)
 CoinTiger | OK | Crypto | No | last and volume (in quote currency) from summary api (bulk)
 Fixer | OK | FIAT | Yes |  Very similar to CurrencyLayer, ticker from api, daily from European Central Bank, only EUR with free subscription, no volume info.
 Graphene | OK | Crypto, FIAT, Stocks | No | last and volume (in quote currency) from Bitshares DEX in realtime
 Huobi | OK | Crypto | No | close price and volume (in quote currency) from CEX API in realtime
-IEX  | OK | Stocks | No | last ("IEX real time price", "15 minute delayed price", "Close" or "Previous close") and volume. 
+IEX  | Fails, to be fixed | Stocks | No | last ("IEX real time price", "15 minute delayed price", "Close" or "Previous close") and volume. 
 IndoDax | OK | Crypto | No | last and volume (in quote currency) from CEX ticker API.
 Kraken | OK | Crypto | No | last and volume (in quote currency) from CEX ticker API.
 LBank | OK | Crypto | No | last and volume (in quote currency) from CEX API in realtime
 MagicWallet | OK | BITCNY/CNY | Yes | BITCNY/CNY ratio from deposti/withdraw on MagicWallet.
-OkCoin  | OK | Crypto | No | last and volume (in quote currency) from CEX API in realtime
+OkCoin  | Fails, to be fixed | Crypto | No | last and volume (in quote currency) from CEX API in realtime
 OpenExchangeRates | OK | FIAT, BTC | Yes | ticker from api, only USD as base and hourly updated with free subscription, no volume info. From unknown sources except Bitcoin wich is from CoinDesk (https://openexchangerates.org/faq#sources)
 Poloniex | OK | Crypto | No | last and volume (in quote currency) from CEX API in realtime
 Quantl | OK | Commodities | Yes | daily price from London Bullion Market Association (LBMA), no volume
-RobinHood | OK | Stocks | No | last, no volume, from unknown source in real time
+RobinHood | Fails, to be fixed | Stocks | No | last, no volume, from unknown source in real time
 WorldCoinIndex | OK | Crypto | Yes| volume weighted price, sum of market volume.
 ZB | OK | Crypto | No |last and volume (in quote currency) from CEX API in realtime
 
@@ -285,9 +285,9 @@ export MAGICWALLET_APIKEY=
 export COINMARKETCAP_APIKEY=
 ```
 
-To run all tests use:  `pytest`.
+To run all tests use:  `PYTHONPATH=. pytest`.
 
-To run a specific test: `pytest -k bitcoinvenezuela`.
+To run a specific test: `PYTHONPATH=. pytest -k bitcoinvenezuela`.
 
 # IMPORTANT NOTE
 
