@@ -9,6 +9,7 @@ from .coinmarketcap import Coinmarketcap
 from .currencylayer import CurrencyLayer
 from .fixer import Fixer
 from .graphene import Graphene
+from .bitshares_orderbook import BitsharesOrderbook
 from .huobi import Huobi
 from .indodax import IndoDax
 from .okcoin import Okcoin

@@ -11,7 +11,7 @@ from bitshares.price import Price
 from bitshares.amount import Amount
 from bitshares.market import Market
 from bitshares.witness import Witness
-from bitshares.exceptions import AccountDoesNotExistsException
+from bitshares.exceptions import AccountDoesNotExistsException, WitnessDoesNotExistsException
 from datetime import datetime, date, timezone
 from . import sources
 import logging
@@ -50,7 +50,7 @@ class Feed(object):
             witness = Witness(self.config["producer"])
             global_properties = shared_bitshares_instance().rpc.get_global_properties()
             self.is_active_witness = bool(witness['id'] in global_properties['active_witnesses'])
-        except AccountDoesNotExistsException:
+        except (AccountDoesNotExistsException, WitnessDoesNotExistsException):
             self.is_active_witness = False
 
     def reset(self):
@@ -280,11 +280,16 @@ class Feed(object):
                             sources=[self.get_source_description(datasource, quote, base, feed_data)]
                         )
 
-    def derive2Markets(self, base_symbol, target_symbol):
+    def derive2Markets(self, base_symbol, target_symbol, apply_volume_limit=False):
         """ derive BTS prices for all assets in assets_derive
             This loop adds prices going via 2 markets:
             E.g.: CNY:BTC -> BTC:BTS = CNY:BTS
             I.e.: BTS: interasset -> interasset: targetasset
+
+            :param str base_symbol:
+            :param str target_symbol:
+            :param bool apply_volume_limit: True = limit final volume by each conversion step
+                                            False = use volume of final step only
         """
         for interasset in self.config.get("intermediate_assets", []):
             if interasset == base_symbol:
@@ -296,22 +301,39 @@ class Feed(object):
                     for idx in range(0, len(self.data[interasset][target_symbol])):
                         if self.data[interasset][target_symbol][idx]["volume"] == 0:
                             continue
+
+                        # Price of base_symbol/target_symbol
+                        price = float(self.data[interasset][target_symbol][idx]["price"] * ratio["price"])
+                        # Volume of the last step, in target_symbol
+                        volume = float(self.data[interasset][target_symbol][idx]["volume"])
+                        if apply_volume_limit:
+                            volume = min(
+                                # Volume of interasset on base_symbol/interasset market (first step) transformed into
+                                # target_symbol equivalent
+                                ratio["volume"] / float(self.data[interasset][target_symbol][idx]["price"]),
+                                volume
+                            )
                         self.addPrice(
                             base_symbol,
                             target_symbol,
-                            float(self.data[interasset][target_symbol][idx]["price"] * ratio["price"]),
-                            float(self.data[interasset][target_symbol][idx]["volume"]),
+                            price,
+                            volume,
                             sources=[
                                 ratio["sources"],
                                 self.data[interasset][target_symbol][idx]["sources"]
                             ]
                         )
 
-    def derive3Markets(self, base_symbol, target_symbol):
+    def derive3Markets(self, base_symbol, target_symbol, apply_volume_limit=False):
         """ derive BTS prices for all assets in assets_derive
             This loop adds prices going via 3 markets:
             E.g.: GOLD:USD -> USD:BTC -> BTC:BTS = GOLD:BTS
             I.e.: BTS: interassetA -> interassetA: interassetB -> symbol: interassetB
+
+            :param str base_symbol:
+            :param str target_symbol:
+            :param bool apply_volume_limit: True = limit final volume by each conversion step
+                                            False = use volume of final step only
         """
         if "intermediate_assets" not in self.config or not self.config["intermediate_assets"]:
             return
@@ -335,11 +357,27 @@ class Feed(object):
                                 if self.data[interassetA][target_symbol][idx]["volume"] == 0:
                                     continue
                                 log.info("derive_across_3markets - found %s -> %s -> %s -> %s", base_symbol, interassetB, interassetA, target_symbol)
+                                price = float(
+                                    self.data[interassetA][target_symbol][idx]["price"] * ratioA["price"] * ratioB["price"]
+                                )
+                                volume = float(self.data[interassetA][target_symbol][idx]["volume"])
+                                if apply_volume_limit:
+                                    price_interassetB_to_target_symbol = float(
+                                        self.data[interassetA][target_symbol][idx]["price"] * ratioA["price"]
+                                    )
+                                    volume = min(
+                                        # Volume in interassetB transformed to volume in target_symbol
+                                        ratioB["volume"] / price_interassetB_to_target_symbol,
+                                        # Volume in interassetA transformed to volume in target_symbol
+                                        ratioA["volume"] / self.data[interassetA][target_symbol][idx]["price"],
+                                        # Volume in target_symbol, last step
+                                        self.data[interassetA][target_symbol][idx]["volume"]
+                                    )
                                 self.addPrice(
                                     base_symbol,
                                     target_symbol,
-                                    float(self.data[interassetA][target_symbol][idx]["price"] * ratioA["price"] * ratioB["price"]),
-                                    float(self.data[interassetA][target_symbol][idx]["volume"]),
+                                    price,
+                                    volume,
                                     sources=[
                                         ratioB["sources"],
                                         ratioA["sources"],
@@ -372,10 +410,16 @@ class Feed(object):
     
     # Cf BSIP-42: https://github.com/bitshares/bsips/blob/master/bsip-0042.md
     def compute_target_price(self, symbol, backing_symbol, real_price, asset):
+        dex_price = 0
+        settlement_price = 0
+        try:
+            ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
+            dex_price = float(ticker["latest"])
+            settlement_price = float(ticker['baseSettlement_price'])
+        except ValueError:
+            # Happens when ticker data is empty, see https://github.com/xeroc/python-graphenelib/issues/87
+            pass
 
-        ticker = Market("%s:%s" % (backing_symbol, symbol)).ticker()
-        dex_price = float(ticker["latest"])
-        settlement_price = float(ticker['baseSettlement_price'])
         premium = (real_price / dex_price) - 1 if dex_price != 0.0 else 0.0
         details = self.get_premium_details('BIT{}'.format(symbol), symbol, dex_price)
 
@@ -462,6 +506,19 @@ class Feed(object):
 
             print('{} PID info: adjustment={}, pid={} (p={}, i={}, d={}), safe={}'.format(symbol, adjustement, pid_adjustment, p, i, d, safe_feed_adjustment))
             self.save_pid_data(historic_file, premium, i)
+        elif target_price_algorithm == 'limit_price_rise':
+            # If price of BACKING_ASSET/ASSET rises too high, limit price movement to defined %
+            current_feed = self.get_my_current_feed(asset)
+            target_price_lpr_max_diff = self.assetconf(symbol, "target_price_lpr_max_diff")
+
+            if current_feed and "settlement_price" in current_feed:
+                old_price = float(current_feed["settlement_price"])
+                # It is supposed we're operating on "quotes: ASSET", "bases: BACKING_ASSET", thus real_price is
+                # ASSET/BACKING_ASSET (Example: 10 FOO per 1 BTS), so we're limiting price movement when FOO value
+                # rises.
+                if not old_price == float("inf"):
+                    # When publishing price first time, bypass this adjustment
+                    adjusted_price = max(real_price, old_price / (1 + target_price_lpr_max_diff))
 
         return (premium, adjusted_price, details)
 
@@ -484,8 +541,11 @@ class Feed(object):
         # Fill in self.data
         self.appendOriginalPrices(symbol)
         log.info("Computed data (raw): \n{}".format(self.data))
-        self.derive2Markets(symbol, backing_symbol)
-        self.derive3Markets(symbol, backing_symbol)
+        apply_volume_limit = False
+        if self.assetconf(symbol, "derive_across_markets_apply_volume_limit", no_fail=True):
+            apply_volume_limit = True
+        self.derive2Markets(symbol, backing_symbol, apply_volume_limit=apply_volume_limit)
+        self.derive3Markets(symbol, backing_symbol, apply_volume_limit=apply_volume_limit)
         log.info("Computed data (after derivation): \n{}".format(self.data))
 
         if symbol not in self.data:

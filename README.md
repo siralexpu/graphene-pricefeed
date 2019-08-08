@@ -137,6 +137,7 @@ Binance | OK | Crypto | No | last and volume (in quote currency) from CEX ticker
 BitcoinAverage | OK | Crypto | No | Use APIv2, get last and volume from an average of multiple exchanges.
 Bitcoin Venezuela | OK | Crypto | No | ticker from api with 15 minutes delay, no volume
 BitsharesFeed | OK | Crypto (MPA) | No | current feed price in Bitshares DEX, no volume.
+BitsharesOrderbook | OK | Crypto | No | measure orderbook depth on Bitshares DEX
 Bitstamp | OK | Crypto | No | last and volume (in quote currency) from CEX ticker api
 Bittrex | OK | Crypto | No | last and volume (in quote currency) from summary api (bulk)
 Coinbase | OK | Crypto | No | Use Coinbase Pro (ex GDAX) ticker api to get last and 24h volume.
