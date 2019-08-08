@@ -269,6 +269,8 @@ default:
     # E.g.: GOLD:USD -> USD:BTC -> BTC:BTS = GOLD:BTS
     derive_across_3markets: False
 
+    # When deriving price across several markets, limit final volume by the step with minimal volume
+    derive_across_markets_apply_volume_limit: false
 
 # Enabled assets that are derived if no asset is provided via command
 # line

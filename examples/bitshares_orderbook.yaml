@@ -1,0 +1,82 @@
+# If true, a new price feed needs manual confirmation
+confirm: False
+
+# The producer name(s)
+producer: foo
+
+exchanges:
+  xchng_viz_books:
+    klass: BitsharesOrderbook
+    quotes:
+      - XCHNG.VIZ
+    bases:
+      - BTS
+      - RUBLE
+      - RUDEX.GOLOS
+    aliases:
+      XCHNG.VIZ: HERTZ
+    #quote_volume: 1000
+    depth_pct: 15
+    mode: buy_support
+    #mode: center_price
+  bitshares:
+    klass: Graphene
+    quotes:
+      - BTS
+      - RUBLE
+    bases:
+      - RUBLE
+      - RUDEX.GOLOS
+
+assets:
+  VIZBTS:
+        # max age of a feed
+        maxage: 43200
+
+        # minimum percentage that forces a publish
+        min_change: 0.5
+
+        # warn if price change goes above this percentage
+        warn_change: 2
+
+        # skip publishing a feed if price goes above this percentage
+        skip_change: 25
+
+        # Basic Price setup
+        ###################
+        # how to derive a single price from several sources
+        # Choose from: "median", "mean", or "weighted" (by volume)
+        metric: mean
+
+        # Select sources for this particular asset. Each source
+        # has its own fetch() method and collects several markets
+        # any market of an exchanges is considered but only the
+        # current asset's price is derived
+        #
+        # Choose from: - "*": all,
+        #              - loaded exchanges (see below)
+        sources:
+            - "*"
+        
+        # Maximum short squeeze ratio
+        maximum_short_squeeze_ratio: 110.0
+
+        # maintenance collateral ratio (percentage)
+        maintenance_collateral_ratio: 175.0
+
+        # Core exchange factor for paying transaction fees in
+        # non-BTS assets. Premium of 5%
+        core_exchange_factor: 1.20
+
+        # If set to True, prices are also derived via 3
+        # markets instead of just two:
+        # E.g.: GOLD:USD -> USD:BTC -> BTC:BTS = GOLD:BTS
+        #derive_across_3markets: True
+
+        #target_price_algorithm: limit_price_rise
+        #target_price_lpr_max_diff: 0.05
+
+
+intermediate_assets:
+    - RUDEX.GOLOS
+    - RUBLE
