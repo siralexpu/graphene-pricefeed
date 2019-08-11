@@ -1,2 +1,2 @@
 include *.md
-include bitshares_pricefeed/examples/*.yaml
+include examples/*.yaml
