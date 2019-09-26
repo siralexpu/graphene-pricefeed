@@ -220,6 +220,22 @@ assets:
 
 The algorithm used and available are under constant development by Bitshares witnesses, so please look at [examples/bsip42.yaml](examples/bsip42.yaml) for the latest documentation on the possible algorithms and their parameters.
 
+## Price threshold (BSIP76)
+
+Price sources could be manipulated, so a price publisher may want to ensure that the price do not go below a threshold. See [BSIP76](https://github.com/bitshares/bsips/issues/221).
+
+This could be enabled setting the `price_threshold` option on an asset publication configuration:
+
+```
+assets:
+    USD:
+        price_threshold: 0.0350
+    CNY:
+        price_threshold: 0.2200
+```
+
+See [examples/bsip76.yaml](examples/bsip76.yaml) as a full example.
+
 ## Use of encrypted wallet
 
 Initialize wallet and enter credentials:

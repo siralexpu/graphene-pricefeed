@@ -137,6 +137,14 @@ class Feed(object):
 
         return price
 
+    def ensure_threshold(self, symbol, price, asset):
+        price_threshold = self.assetconf(symbol, "price_threshold", no_fail=True)
+
+        if price_threshold and price <  price_threshold:
+            print('WARN: {} computed price ({}) is below threshold ({}), threshold price will be used.'.format(symbol, price, price_threshold))
+            price = price_threshold
+
+        return price
 
     def get_cer(self, symbol, price, asset):
         if self.assethasconf(symbol, "core_exchange_rate"):
@@ -587,6 +595,8 @@ class Feed(object):
         (premium, target_price, details) = self.compute_target_price(symbol, backing_symbol, p, asset)
 
         target_price = self.protect_against_global_settlement(symbol, target_price, asset)
+
+        target_price = self.ensure_threshold(symbol, target_price, asset)
 
         cer = self.get_cer(symbol, target_price, asset)
 
