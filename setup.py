@@ -33,7 +33,7 @@ setup(
         ],
     },
     install_requires=[
-        "requests==2.21.0", # Required by graphenlib
+        "requests==2.22.0", # Required by graphenlib
         "bitshares",
         "uptick",
         "prettytable",
