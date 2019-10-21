@@ -17,7 +17,9 @@ class Coinmarketcap(FeedSource):
                         float(asset["price_btc"]), 
                         float(asset["24h_volume_usd"]) / float(asset["price_btc"]))
 
-                    self.add_rate(feed, 'USD', quote, float(asset["price_usd"]), float(asset["24h_volume_usd"]))
+                    self.add_rate(feed, 'USD', quote, 
+                        float(asset["price_usd"]), 
+                        float(asset["24h_volume_usd"]) / float(asset["price_usd"]))
         self._fetch_altcap(feed)
 
         return feed

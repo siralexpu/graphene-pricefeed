@@ -5,7 +5,7 @@ from .bitcoinaverage import BitcoinAverage
 from .bitcoinvenezuela import BitcoinVenezuela
 from .bittrex import Bittrex
 from .coincap import Coincap
-from .coinmarketcap import Coinmarketcap
+from .coinmarketcap import Coinmarketcap, CoinmarketcapPro
 from .currencylayer import CurrencyLayer
 from .fixer import Fixer
 from .graphene import Graphene

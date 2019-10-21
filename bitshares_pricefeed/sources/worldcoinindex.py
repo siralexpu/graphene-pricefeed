@@ -20,5 +20,5 @@ class WorldCoinIndex(FeedSource):  # Weighted average from WorldCoinIndex
                 for ticker in market:
                     (quote, returnedBase) = ticker['Label'].split('/')
                     if base == returnedBase and quote in self.quotes:
-                        self.add_rate(feed, base, quote, ticker['Price'], ticker['Volume_24h'])
+                        self.add_rate(feed, base, quote, ticker['Price'], ticker['Volume_24h'] / ticker['Price'])
         return feed
