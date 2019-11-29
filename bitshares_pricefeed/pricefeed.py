@@ -146,6 +146,24 @@ class Feed(object):
 
         return price
 
+    # See BAIP-2: https://github.com/bitshares/baips/blob/master/baip-0002.md
+    def loopholes_protection(self, symbol, price, asset):
+        loopholes_protection_days = self.assetconf(symbol, "loopholes_protection_days", no_fail=True)
+
+        if loopholes_protection_days:
+            from . import history
+            loader = history.ElasticSearchLoader(self.config["elasticsearch"])
+            feeds = loader.load(asset["id"], self.producer["id"], loopholes_protection_days)
+            feeds.append(price)
+            moving_average = statistics.mean(feeds)
+            print('{} {}d moving average is {} ({} feeds used).'.format(symbol, loopholes_protection_days, moving_average, len(feeds)))
+            if price < moving_average:
+                print('WARN: {} computed price ({}) is below {}d moving average ({}), average price will be used.'.format(symbol, price, loopholes_protection_days, moving_average))
+                price = moving_average
+
+        return price
+
+
     def get_cer(self, symbol, price, asset):
         if self.assethasconf(symbol, "core_exchange_rate"):
             cer = self.assetconf(symbol, "core_exchange_rate")
@@ -597,6 +615,8 @@ class Feed(object):
         target_price = self.protect_against_global_settlement(symbol, target_price, asset)
 
         target_price = self.ensure_threshold(symbol, target_price, asset)
+
+        target_price = self.loopholes_protection(symbol, target_price, asset)
 
         cer = self.get_cer(symbol, target_price, asset)
 

@@ -33,15 +33,16 @@ setup(
         ],
     },
     install_requires=[
-        "requests==2.22.0", # Required by graphenlib
-        "bitshares",
+        "requests==2.21.0", # Required by graphenlib
+        "bitshares>=0.3.0 ",
         "uptick",
         "prettytable",
         "click",
         "colorama",
         "tqdm",
         "pyyaml",
-        "quandl"
+        "quandl",
+        "elasticsearch-dsl>=6.0.0,<7.0.0" # For moving average
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
