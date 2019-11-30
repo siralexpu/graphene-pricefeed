@@ -41,8 +41,7 @@ setup(
         "colorama",
         "tqdm",
         "pyyaml",
-        "quandl",
-        "elasticsearch-dsl>=6.0.0,<7.0.0" # For moving average
+        "quandl"
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],

@@ -152,11 +152,14 @@ class Feed(object):
 
         if loopholes_protection_days:
             from . import history
-            loader = history.ElasticSearchLoader(self.config["elasticsearch"])
-            feeds = loader.load(asset["id"], self.producer["id"], loopholes_protection_days)
-            feeds.append(price)
-            moving_average = statistics.mean(feeds)
-            print('{} {}d moving average is {} ({} feeds used).'.format(symbol, loopholes_protection_days, moving_average, len(feeds)))
+            history_config = self.config["history"]
+            klass = getattr(history, history_config['klass'])
+            history_feed = klass(**history_config)
+            historical_prices = history_feed.load(symbol, loopholes_protection_days)
+            history_feed.save(symbol, price) 
+            historical_prices.append(price)
+            moving_average = statistics.mean(historical_prices)
+            print('{} {}d moving average is {} ({} feeds used).'.format(symbol, loopholes_protection_days, moving_average, len(historical_prices)))
             if price < moving_average:
                 print('WARN: {} computed price ({}) is below {}d moving average ({}), average price will be used.'.format(symbol, price, loopholes_protection_days, moving_average))
                 price = moving_average
@@ -612,11 +615,11 @@ class Feed(object):
 
         (premium, target_price, details) = self.compute_target_price(symbol, backing_symbol, p, asset)
 
-        target_price = self.protect_against_global_settlement(symbol, target_price, asset)
+        target_price = self.loopholes_protection(symbol, target_price, asset)
 
         target_price = self.ensure_threshold(symbol, target_price, asset)
 
-        target_price = self.loopholes_protection(symbol, target_price, asset)
+        target_price = self.protect_against_global_settlement(symbol, target_price, asset)
 
         cer = self.get_cer(symbol, target_price, asset)
 

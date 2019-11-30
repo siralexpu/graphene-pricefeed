@@ -1,41 +1,35 @@
-from elasticsearch_dsl import connections, Search, Q, A
-from bitshares.price import Price
+import os
+from datetime import datetime, timedelta
+import dateutil.parser
+import csv
 
-class ElasticSearchLoader:
-    def __init__(self, es_config):
-        connections.create_connection(**es_config)
-    
-    def load(self, asset_id, witness_id, n_days):
-        s = Search(index="bitshares-*")
-        s = s.extra(size=1000)
-        s = s.query('bool', filter = [
-                Q('term', operation_type=19),
-                Q("range", block_data__block_time={'gte': 'now-{}d'.format(n_days)}),
-                Q('term', account_history__account=witness_id),
-                Q('term', operation_history__op_object__asset_id=asset_id)
-            ])
-        s = s.params(clear_scroll=False) # Avoid calling DELETE on ReadOnly apis.
-    
-        result = []
-        for hit in s.scan():
-            op = hit.operation_history.op_object
-            price = op["feed"]["settlement_price"]
-            result.append(float(Price(price.to_dict())))
-        return result
+class FileHistory:
+    def __init__(self, dirname, **kvargs):
+        self.dirname = dirname
+        os.makedirs(dirname, exist_ok=True)
 
-if __name__ == '__main__':
-    from bitshares.asset import Asset
-    from bitshares.account import Account
-    from statistics import mean 
+    def _get_filename(self, asset_symbol):
+        return os.path.join(self.dirname, asset_symbol + '.csv')
 
-    usd = Asset("USD")
-    witness = Account("zapata42-witness")
+    def save(self, asset_symbol, price, at=datetime.utcnow()):
+        with open(self._get_filename(asset_symbol), 'a+') as f:
+            writer = csv.writer(f)
+            writer.writerow((at.isoformat(), price))
 
-    es_config = {
-        'hosts': 'https://elasticsearch.bitshares-kibana.info/'
-    }
-
-    loader = ElasticSearchLoader(es_config)
-    feeds = loader.load(usd["id"], witness["id"], 2)
-    print(feeds)
-    print(mean(feeds))
+    def load(self, asset_symbol, n_days, with_dates=False):
+        try:
+            with open(self._get_filename(asset_symbol), 'r') as f:
+                reader = csv.reader(f)
+                oldest_valid_date = datetime.utcnow() - timedelta(days=n_days)
+                prices = []
+                for row in reader:
+                    timestamp = dateutil.parser.isoparse(row[0])
+                    price = float(row[1])
+                    if timestamp >= oldest_valid_date:
+                        if with_dates:
+                            prices.append([timestamp, price])
+                        else:
+                            prices.append(price)
+                return prices
+        except IOError:
+            return []

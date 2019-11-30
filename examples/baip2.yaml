@@ -227,6 +227,7 @@ intermediate_assets:
     - BITCNY
     - ETH
     - QC
-# Historical feeds needed to compute the moving average are retieved from Elastic Search.
-elasticsearch:
-    hosts: https://elasticsearch.bitshares-kibana.info/
+# Historical computed prices are saved in local files to be used in next runs to compute the moving average.
+history:
+    klass: FileHistory
+    dirname: prices_db
