@@ -227,7 +227,12 @@ intermediate_assets:
     - BITCNY
     - ETH
     - QC
-# Historical computed prices are saved in local files to be used in next runs to compute the moving average.
+# Historical computed prices storage, to be used in next runs to compute the moving average.
 history:
+    # Save as CSV files in a (local) directory
     klass: FileHistory
     dirname: prices_db
+
+    # Save in a (remote) database
+    #klass: SqlHistory
+    #url: "postgres+pypostgresql://user:pass@localhost:5432/postgres"

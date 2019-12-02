@@ -5,12 +5,7 @@ import os
 from datetime import datetime, timedelta
 
 class HistoryTestCase(unittest.TestCase):
-    def test_file_history(self):
-        from bitshares_pricefeed.history import FileHistory
-
-        db_dir = tempfile.mkdtemp()
-        try:
-            history = FileHistory(db_dir)
+    def _complex_test_case(self, history):
             history.save('USD', .023, at=(datetime.utcnow() - timedelta(days=3)))
             history.save('USD', .024, at=(datetime.utcnow() - timedelta(days=2)))
             history.save('USD', .025, at=(datetime.utcnow() - timedelta(days=1)))
@@ -21,6 +16,15 @@ class HistoryTestCase(unittest.TestCase):
 
             prices = history.load('USD', 2, with_dates=True)
             self.assertListEqual([row[1] for row in prices ], [.025, .026])
+    
+
+    def test_file_history(self):
+        from bitshares_pricefeed.history import FileHistory
+
+        db_dir = tempfile.mkdtemp()
+        try:
+            history = FileHistory(db_dir)
+            self._complex_test_case(history)
         finally:
             shutil.rmtree(db_dir)
 
@@ -46,3 +50,17 @@ class HistoryTestCase(unittest.TestCase):
             self.assertListEqual(prices, [])
         finally:
             shutil.rmtree(db_dir)
+
+
+    def test_sql_history(self):
+        import bitshares_pricefeed.history
+        options = { 
+            'klass': 'SqlHistory', 
+            'url': 'postgresql+pypostgresql://postgres:secret@localhost:5432/postgres',
+            'extras': {
+                'echo': True
+            }
+        }
+        klass = getattr(bitshares_pricefeed.history, options['klass'])
+        history = klass(**options)
+        self._complex_test_case(history)

@@ -167,7 +167,7 @@ def update(ctx, assets, dry_run, confirm_warning, skip_critical):
     assert "producer" in ctx.config and ctx.config["producer"], \
         "Please provide a feed producer name in the configuration!"
 
-    feed = Feed(config=ctx.config)
+    feed = Feed(config=ctx.config, dry_run=dry_run)
     feed.fetch()
     feed.derive(assets)
     prices = feed.get_prices()

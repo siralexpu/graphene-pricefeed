@@ -237,6 +237,75 @@ assets:
 
 See [examples/bsip76.yaml](examples/bsip76.yaml) as a full example.
 
+## Loopholes protection (BAIP2)
+
+In order to avoid loopholes, BAIP2 propose to use as feed price the highest between the current price and the two-day moving average price.
+
+This could be enabled setting the `price_threshold` option on an asset publication configuration, or in the default asset configuration section:
+
+```
+default:
+    loopholes_protection_days: 2
+
+assets:
+    USD:
+        loopholes_protection_days: 3
+```
+
+In that case, all the assets will have the loopholes protection activated, and will use a two days moving average. There is an exception for USD, that will use a three day moving average.
+
+In order to compute the moving average the previously computed prices (before adjustment) will be used. Those prices should be first saved in a storage then they will be loaded to compute the average.
+The storage mechanism should be configured, as there is no default option. See below for the detailed explanation.
+
+See also [examples/baip2.yaml](examples/baip2.yaml) as a working example.
+
+### History storage configuration
+
+To store and load the computed prices, multiple storage macanism option are implemented:
+
+   - file
+   - database
+
+#### File storage
+
+To use a 'file' storage you should add in the configuration:
+
+```
+history:
+    klass: FileHistory
+    dirname: prices_db
+```
+
+This will save all the computed prices in the relative `prices_db` folder using a CSV file per asset.
+
+#### Database storage
+
+```
+history:
+    klass: SqlHistory
+    url: "postgres+pypostgresql://user:pass@localhost:5432/postgres"
+    schema_name: 'price_feed'
+    table_name: 'raw_prices'
+```
+
+Any kind of [database supported by SQLAlchemy can be used](https://docs.sqlalchemy.org/en/13/dialects/).
+However, the appropriate Python drivers should be installed.
+As an example to use Postgresql you should first run: 
+
+```
+pip install SQLAlchemy py-postgresql
+```
+
+As this is a popular option you can also install it using the `history_db_postgresql` feature: 
+
+```
+pip install .[history_db_postgresql]
+```
+
+See [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/13/core/engines.html) for more details on how to connect to the database.
+
+By default the script will use a table `raw_prices` in the `price_feed` schema. Schema and table names are configurable, they will be automatically created if they does not exists.
+
 ## Use of encrypted wallet
 
 Initialize wallet and enter credentials:

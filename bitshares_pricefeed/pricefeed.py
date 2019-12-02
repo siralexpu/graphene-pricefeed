@@ -32,8 +32,9 @@ class Feed(object):
     feed = {}
     price_result = {}
 
-    def __init__(self, config):
+    def __init__(self, config, dry_run):
         self.config = config
+        self.dry_run = dry_run
         self.reset()
         self.get_witness_activeness()
         self.getProducer()
@@ -156,7 +157,8 @@ class Feed(object):
             klass = getattr(history, history_config['klass'])
             history_feed = klass(**history_config)
             historical_prices = history_feed.load(symbol, loopholes_protection_days)
-            history_feed.save(symbol, price) 
+            if not self.dry_run:
+                history_feed.save(symbol, price) 
             historical_prices.append(price)
             moving_average = statistics.mean(historical_prices)
             print('{} {}d moving average is {} ({} feeds used).'.format(symbol, loopholes_protection_days, moving_average, len(historical_prices)))

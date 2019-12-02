@@ -43,6 +43,9 @@ setup(
         "pyyaml",
         "quandl"
     ],
+    extras_require = {
+        'history_db_postgresql':  ["SQLAlchemy", "py-postgresql"]
+    },
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     include_package_data=True,
