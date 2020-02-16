@@ -76,7 +76,7 @@ class SqlHistory:
             fields = [self.prices.c.timestamp, self.prices.c.price]
         
         oldest_valid_date = datetime.utcnow() - timedelta(days=n_days)
-        query = select(fields).where(self.prices.c.timestamp >= oldest_valid_date).order_by(self.prices.c.timestamp)
+        query = select(fields).where(self.prices.c.asset == asset_symbol and self.prices.c.timestamp >= oldest_valid_date).order_by(self.prices.c.timestamp)
         rows = self.db.execute(query).fetchall()
         if with_dates:
             return [[timestamp, price] for (timestamp, price) in rows ]
