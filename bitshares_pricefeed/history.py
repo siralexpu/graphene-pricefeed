@@ -37,7 +37,7 @@ class FileHistory:
 
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, DateTime, Float, String, MetaData
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, and_
 from sqlalchemy.schema import CreateSchema
 
 class SqlHistory:
@@ -76,7 +76,11 @@ class SqlHistory:
             fields = [self.prices.c.timestamp, self.prices.c.price]
         
         oldest_valid_date = datetime.utcnow() - timedelta(days=n_days)
-        query = select(fields).where(self.prices.c.asset == asset_symbol and self.prices.c.timestamp >= oldest_valid_date).order_by(self.prices.c.timestamp)
+        query = select(fields).where(
+            and_(
+                self.prices.c.asset == asset_symbol, 
+                self.prices.c.timestamp >= oldest_valid_date
+            )).order_by(self.prices.c.timestamp)
         rows = self.db.execute(query).fetchall()
         if with_dates:
             return [[timestamp, price] for (timestamp, price) in rows ]
