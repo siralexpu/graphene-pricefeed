@@ -5,13 +5,13 @@ from . import FeedSource, _request_headers
 class Aex(FeedSource):
     def _fetch(self):
         feed = {}
-        url = "http://api.aex.com/ticker.php"
+        url = "https://api.aex.com/ticker.php"
         for base in self.bases:
             for quote in self.quotes:
                 if base == quote:
                     continue
                 params = {'c': quote.lower(), 'mk_type': base.lower()}
-                response = requests.get(url=url, params=params, headers=_request_headers, timeout=self.timeout)
+                response = requests.get(url=url, params=params, headers=_request_headers, timeout=self.timeout, verify=False)
                 result = response.json()
                 if result != None and \
                     "ticker" in result and \
