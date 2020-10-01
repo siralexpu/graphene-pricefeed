@@ -37,3 +37,5 @@ from .hero import Hero
 from .kraken import Kraken
 from .coinbase import Coinbase
 from .coingecko import CoinGecko
+from .biki import Biki
+

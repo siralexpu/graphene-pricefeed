@@ -132,6 +132,7 @@ Name | Status | Assets type | API Key | Description
  --- | ---    | ---         | ---     |   ---
  AEX |  OK    |   Crypto    | No      | last and volume (in quote currency) from CEX ticker api with 15 sec delay 
 AlphaVantage | OK | FIAT, Stocks, BTC | Yes | last from unknown source for currencies and from iex for stocks. volume only for stocks (in nb of shares).
+Biki | OK | Crypto | No | last and volume (in quote currency) from CEX ticker api
 Big.One | OK | Crypto | Yes | bid/ask average and volume (in quote currency) from bulk CEX ticker API.
 Binance | OK | Crypto | No | last and volume (in quote currency) from CEX ticker api
 BitcoinAverage | OK | Crypto | No | Use APIv2, get last and volume from an average of multiple exchanges.
