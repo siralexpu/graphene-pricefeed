@@ -202,63 +202,6 @@ The main use cases is if you want to retrieve a pair like BTC/USD from multiples
 
 See [example configuration](examples/composite.yaml).
 
-#### Algorithm Based Assets
-
-Some assets use a computed formula as price like HERO or HERTZ. 
-Those are implemented with a source class that return the computed value, usually with USD as quote.
-
-## Target price mode (BSIP42)
-
-In order to better maintain the peg of Smartcoins, it might be necessary to apply a negative feedback to the computed price. The published price is no more the market price but a target price. See [BSIP42](https://github.com/bitshares/bsips/blob/master/bsip-0042.md) for more information.
-
-This could be enabled setting the `target_price_algorithm` option on an asset publication:
-
-```
-assets:
-    CNY:
-        target_price_algorithm: 'adjusted_feed_price'
-        target_price_adjustment_scale: 1.2
-```
-
-The algorithm used and available are under constant development by Bitshares witnesses, so please look at [examples/bsip42.yaml](examples/bsip42.yaml) for the latest documentation on the possible algorithms and their parameters.
-
-## Price threshold (BSIP76)
-
-Price sources could be manipulated, so a price publisher may want to ensure that the price do not go below a threshold. See [BSIP76](https://github.com/bitshares/bsips/issues/221).
-
-This could be enabled setting the `price_threshold` option on an asset publication configuration:
-
-```
-assets:
-    USD:
-        price_threshold: 0.0350
-    CNY:
-        price_threshold: 0.2200
-```
-
-See [examples/bsip76.yaml](examples/bsip76.yaml) as a full example.
-
-## Loopholes protection (BAIP2)
-
-In order to avoid loopholes, BAIP2 propose to use as feed price the highest between the current price and the two-day moving average price.
-
-This could be enabled setting the `price_threshold` option on an asset publication configuration, or in the default asset configuration section:
-
-```
-default:
-    loopholes_protection_days: 2
-
-assets:
-    USD:
-        loopholes_protection_days: 3
-```
-
-In that case, all the assets will have the loopholes protection activated, and will use a two days moving average. There is an exception for USD, that will use a three day moving average.
-
-In order to compute the moving average the previously computed prices (before adjustment) will be used. Those prices should be first saved in a storage then they will be loaded to compute the average.
-The storage mechanism should be configured, as there is no default option. See below for the detailed explanation.
-
-See also [examples/baip2.yaml](examples/baip2.yaml) as a working example.
 
 ### History storage configuration
 
