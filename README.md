@@ -8,7 +8,7 @@ Build docker image:
 ```
 cd ~
 git clone https://github.com/graphene-blockchain/graphene-pricefeed.git
-cd bitshares-pricefeed
+cd graphene-pricefeed
 docker build -t graphene-pricefeed .
 ```
 
@@ -19,7 +19,7 @@ Install globally:
 ```
 cd ~
 git clone https://github.com/graphene-blockchain/graphene-pricefeed.git
-cd bitshares-pricefeed
+cd graphene-pricefeed
 python setup.py install
 ```
 
@@ -28,7 +28,7 @@ Or in a dedicated virtualenv environment:
 ```
 cd ~
 git clone https://github.com/graphene-blockchain/graphene-pricefeed.git
-cd bitshares-pricefeed
+cd graphene-pricefeed
 pip install virtualenv 
 virtualenv -p python3 wrappers_env/ 
 source wrappers_env/bin/activate
@@ -40,7 +40,7 @@ python setup.py install
 You can generate a sample configuration file using:
 
 ```
-bitshares-pricefeed create
+graphene-pricefeed create
 ```
 Or copy one from the `examples` directory:
 
@@ -67,12 +67,12 @@ producer: your_witness_name
 IF you use docker image you can run:
 
 ```
-docker run -v /path/to/config.yml:/config/config.yml bitshares-pricefeed update --active-key=XXXXXXX
+docker run -v /path/to/config.yml:/config/config.yml graphene-pricefeed update --active-key=XXXXXXX
 ```
 
-If you installed bitshares-pricefeed locally use:
+If you installed graphene-pricefeed locally use:
 ```
-bitshares-pricefeed update --active-key=XXXXXXX
+graphene-pricefeed update --active-key=XXXXXXX
 ```
 
 See [help](#help) for the full description of the command.
