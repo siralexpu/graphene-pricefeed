@@ -1,4 +1,4 @@
-# Price Feed Script for BitShares
+# Price Feed Script for Graphene blockchain
 
 ## Installation 
 
@@ -7,9 +7,9 @@
 Build docker image:
 ```
 cd ~
-git clone https://github.com/Zapata/bitshares-pricefeed.git
+git clone https://github.com/graphene-blockchain/graphene-pricefeed.git
 cd bitshares-pricefeed
-docker build -t bitshares-pricefeed .
+docker build -t graphene-pricefeed .
 ```
 
 ### Alternative manual installation on Ubuntu 16.04 LTS or similar.
@@ -18,7 +18,7 @@ Install globally:
 
 ```
 cd ~
-git clone https://github.com/Zapata/bitshares-pricefeed.git
+git clone https://github.com/graphene-blockchain/graphene-pricefeed.git
 cd bitshares-pricefeed
 python setup.py install
 ```
@@ -27,7 +27,7 @@ Or in a dedicated virtualenv environment:
 
 ```
 cd ~
-git clone https://github.com/Zapata/bitshares-pricefeed.git
+git clone https://github.com/graphene-blockchain/graphene-pricefeed.git
 cd bitshares-pricefeed
 pip install virtualenv 
 virtualenv -p python3 wrappers_env/ 
@@ -87,14 +87,14 @@ Using cron:
 $ crontab -e
 ACTIVE_KEY="XXXXXXXXXXXXXXXX"
 
-0,15,30,45 * * * * docker run -v /path/to/config.yaml:/config/config.yaml bitshares-pricefeed update --skip-critical --active-key=$ACTIVE_KEY
+0,15,30,45 * * * * docker run -v /path/to/config.yaml:/config/config.yaml graphene-pricefeed update --skip-critical --active-key=$ACTIVE_KEY
 ```
 
 ## Help
 
 ```
-$ bitshares-pricefeed --help
-Usage: bitshares-pricefeed [OPTIONS] COMMAND [ARGS]...
+$ graphene-pricefeed --help
+Usage: graphene-pricefeed [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --configfile TEXT
@@ -108,8 +108,8 @@ Commands:
 ```
 
 ```
-$ bitshares-pricefeed update --help
-Usage: bitshares-pricefeed update [OPTIONS] [ASSETS]...
+$ graphene-pricefeed update --help
+Usage: graphene-pricefeed update [OPTIONS] [ASSETS]...
 
   Update price feed for assets
 
@@ -312,7 +312,7 @@ By default the script will use a table `raw_prices` in the `price_feed` schema. 
 Initialize wallet and enter credentials:
 
 ```
-$ bitshares-pricefeed addkey
+$ graphene-pricefeed addkey
 ```
 
 You will need to enter your cli wallet encryption passphrase. If you
@@ -332,7 +332,7 @@ Private Key (wif) [Enter to quit]:
 Then you can run the feed update without any argument, it will prompt for the Wallet Encryption Passphrase.
 
 ```
-$ bitshares-pricefeed update
+$ graphene-pricefeed update
 Current Wallet Passphrase:
 ```
 
@@ -347,13 +347,13 @@ SHELL=/bin/bash
 PATH=/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 UNLOCK="PASSWD"
 
-0,15,30,45 * * * * bitshares-pricefeed --configfile /home/ubuntu/config.yml --skip-critical --no-confirm-warning update >> /var/log/bitshares-pricefeed.log 2>&1
+0,15,30,45 * * * * graphene-pricefeed --configfile /home/ubuntu/config.yml --skip-critical --no-confirm-warning update >> /var/log/graphene-pricefeed.log 2>&1
 ```
 
 Or with Docker image:
 
 ```
-docker run -v /path/to/config:/config -v /path/to/wallet:/root/.local/share/bitshares -e UNLOCK=PASS bitshares-pricefeed
+docker run -v /path/to/config:/config -v /path/to/wallet:/root/.local/share/bitshares -e UNLOCK=PASS graphene-pricefeed
 ```
 
 

@@ -5,10 +5,10 @@ import sys
 
 __VERSION__ = '0.0.10'
 
-assert sys.version_info[0] == 3, "BitShares-PriceFeed requires Python > 3"
+assert sys.version_info[0] == 3, "Graphene-PriceFeed requires Python > 3"
 
 setup(
-    name='bitshares-pricefeed',
+    name='graphene-pricefeed',
     version=__VERSION__,
     description='Command line tool to assist with price feed generation',
     long_description=open('README.md').read(),
@@ -17,8 +17,8 @@ setup(
     author_email='Fabian@chainsquad.com',
     maintainer='Fabian Schuh',
     maintainer_email='Fabian@chainsquad.com',
-    url='http://www.github.com/xeroc/bitshares-pricefeed',
-    keywords=['bitshares', 'price', 'feed', 'cli'],
+    url='https://github.com/graphene-blockchain/graphene-pricefeed',
+    keywords=['graphene', 'price', 'feed', 'cli'],
     packages=find_packages(),
     classifiers=[
         'License :: OSI Approved :: MIT License',
@@ -29,12 +29,12 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'bitshares-pricefeed = bitshares_pricefeed.cli:main'
+            'graphene-pricefeed = bitshares_pricefeed.cli:main'
         ],
     },
     install_requires=[
-        "requests==2.22.0", # Required by graphenlib
-        "bitshares>=0.3.0 ",
+        "requests==2.22.0",  # Required by graphenlib
+        "bitshares",
         "uptick",
         "prettytable",
         "click",
@@ -43,9 +43,13 @@ setup(
         "pyyaml",
         "quandl"
     ],
-    extras_require = {
-        'history_db_postgresql':  ["SQLAlchemy", "py-postgresql"]
+    extras_require={
+        'history_db_postgresql': ["SQLAlchemy", "py-postgresql"]
     },
+    dependency_links=[
+        'git+https://github.com/graphene-blockchain/python-bitshares#egg=bitshares',
+        'git+https://github.com/graphene-blockchain/uptick#egg=uptick'
+    ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     include_package_data=True,
