@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 def configfile(f):
     @click.pass_context
     def new_func(ctx, *args, **kwargs):
-        ctx.config = yaml.load(open(ctx.obj["configfile"]))
+        ctx.config = yaml.safe_load(open(ctx.obj["configfile"]))
         return ctx.invoke(f, *args, **kwargs)
     return update_wrapper(new_func, f)
 

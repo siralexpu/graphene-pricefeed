@@ -29,8 +29,10 @@ exchanges:
   binance:
       klass: Binance
       quotes:
-          - BTS
           - BTC
+          - EOS
+          - LTC
+          - BTS
       bases:
           - BTC
           - USDT
@@ -47,13 +49,45 @@ exchanges:
     quotes:
       - GPH
     bases:
-      - RUDEX.BTS
+      #- USD
       - RUDEX.USDT
-      - RUDEX.BTC
+      - RUDEX.EOS
+      - RUDEX.LTC
+      #- RUDEX.BTS
+      #- RUDEX.BTC
     aliases:
-        RUDEX.BTS: BTS
         RUDEX.USDT: USDT
+        RUDEX.EOS: EOS
+        RUDEX.LTC: LTC
+        RUDEX.BTS: BTS
         RUDEX.BTC: BTC
+
+
+  ####################################
+  # Commodities
+  ####################################
+  quandl:
+    klass: Quandl
+    api_key: api_key!
+    datasets:
+        "GOLD:USD":
+            - LBMA/GOLD
+        "SILVER:USD":
+            - LBMA/SILVER
+
+  ####################################
+  # GOLD and SILVER
+  ####################################
+  goldprice:
+      klass: Goldprice
+      quotes:
+          - XAU
+          - XAG
+      bases:
+          - USD
+      aliases:
+          XAU: GOLD
+          XAG: SILVER
 
 
   bitstamp:
@@ -63,14 +97,17 @@ exchanges:
       bases:
           - USD
 
-  #coinmarketcap:
-  #    klass: Coinmarketcap
-  #    quotes:
-  #        - BTC
-  #        - BTS
-  #    bases:
-  #        - BTC
-  #        - USD
+  bittrex:
+      klass: Bittrex
+      enable: True
+      quotes:
+          - USD
+          - USDT
+      bases:
+          - USDT
+          - USD
+
+
 
 
 # default settings
@@ -82,10 +119,10 @@ default:
     min_change: 0.01
 
     # warn if price change goes above this percentage
-    warn_change: 50
+    warn_change: 40
 
     # skip publishing a feed if price goes above this percentage
-    skip_change: 60
+    skip_change: 50
 
     # skip publishing a feed if producer is not an active witness.
     skip_inactive_witness: True
@@ -160,8 +197,8 @@ assets:
     #SGD:
     #NZD:
     #KRW:
-    #GOLD:
-    #SILVER:
+    GOLD:
+    SILVER:
 
 # Intermediate assets are useful for 2 and 3 market price derivation
 # E.g.: USD:BTC -> BTC:NBS = USD:NBS
@@ -169,7 +206,9 @@ assets:
 intermediate_assets:
     - USDT
     - BTS
-    #- USD
+    - EOS
+    - LTC
+    - USD
     #- GPH
     - BTC
 
