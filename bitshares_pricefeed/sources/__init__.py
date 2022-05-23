@@ -39,4 +39,6 @@ from .coinbase import Coinbase
 from .coingecko import CoinGecko
 from .biki import Biki
 from .goldprice import Goldprice
+from .currate import Currate
+from .yahoo import Yahoo
 

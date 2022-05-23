@@ -21,10 +21,96 @@
 confirm: False
 
 # The producer name(s)
-producer: alex-pu
+producer: $PRODUCER
 
 # Exchange settings (Here, you may need to add API keys)
 exchanges:
+
+  ####################################
+  # Yahoo: Fiat + Commodities + Crypto + Stocks
+  ####################################
+  yahoo:
+    klass: Yahoo
+    quotes:
+        - USD
+        - EUR
+        - RUB
+        - CNY
+    bases:
+        - USD
+        - EUR
+        - RUB
+        - CNY
+    separate_quotes:
+        "GOLD:USD": #COMEX
+            - GC=F
+        "SILVER:USD": #COMEX
+            - SI=F
+        #"PLATINUM:USD": #NY Mercantile
+        #    - PL=F
+        #"OIL:USD": #Brent Crude Oil
+        #    - BZ=F
+        #"SP500:USD": #S&P 500
+        #    - ^GSPC
+        #"NFLX:USD": #Netflix, Inc.
+        #    - NFLX
+        #"AAPL:USD": #Apple Inc.
+        #    - AAPL
+
+  currate:
+      klass: Currate
+      api_key: your_api_key
+      quotes:
+          - USD
+          - EUR
+          - RUB
+          - CNY
+      bases:
+          - USD
+          - EUR
+          - RUB
+          - CNY
+
+  ####################################
+  # Fiat Exchange Rates
+  ####################################
+
+  #currencylayer:
+  #    klass: CurrencyLayer
+  #    api_key: your_api_key
+  #    free_subscription: False
+  #    quotes:
+  #        - USD
+  #        - EUR
+  #        - RUB
+  #        - CNY
+  #        - XAU
+
+          #- ARS
+          #- TRY
+          #- SGD
+          #- HKD
+          #- NZD
+          #- CNY
+          #- MXN
+          #- CAD
+          #- CHF
+          #- AUD
+          #- GBP
+          #- JPY
+          #- KRW
+          #- SEK
+
+  #    bases:
+      #    # Only USD with free subscription
+      #        - USD
+      #        - EUR
+      #        - RUB
+      #        - CNY
+      #aliases:
+      #    RUB: RUB
+
+
 
   binance:
       klass: Binance
@@ -49,18 +135,18 @@ exchanges:
     quotes:
       - GPH
     bases:
-      #- USD
       - RUDEX.USDT
       - RUDEX.EOS
       - RUDEX.LTC
-      #- RUDEX.BTS
+      - RUDEX.BTS
       #- RUDEX.BTC
+      #- USD
     aliases:
         RUDEX.USDT: USDT
         RUDEX.EOS: EOS
         RUDEX.LTC: LTC
         RUDEX.BTS: BTS
-        RUDEX.BTC: BTC
+        #RUDEX.BTC: BTC
 
 
   ####################################
@@ -68,7 +154,7 @@ exchanges:
   ####################################
   quandl:
     klass: Quandl
-    api_key: api_key!
+    api_key: your_api_key
     datasets:
         "GOLD:USD":
             - LBMA/GOLD
@@ -178,13 +264,15 @@ default:
 # line
 assets:
     USD:
+    EUR:
+    RUB:
     #CNY:
       #maximum_short_squeeze_ratio: 102.0
       #core_exchange_factor: 1.2
       #maintenance_collateral_ratio: 1.6
+    GOLD:
+    SILVER:
     #TRY:
-    #RUB:
-    #EUR:
     #AUD:
     #JPY:
     #CHF:
@@ -197,20 +285,20 @@ assets:
     #SGD:
     #NZD:
     #KRW:
-    GOLD:
-    SILVER:
 
 # Intermediate assets are useful for 2 and 3 market price derivation
 # E.g.: USD:BTC -> BTC:NBS = USD:NBS
 #       GOLD:USD -> USD:BTC -> BTC:NBS = GOLD:NBS
 intermediate_assets:
+    - USD
+    - RUB
+    - EUR
+    - CNY
     - USDT
     - BTS
     - EOS
     - LTC
-    - USD
-    #- GPH
-    - BTC
+    #- BTC
 
 # Historical computed prices storage, to be used in next runs to compute the moving average.
 #history:
