@@ -140,10 +140,12 @@ CoinEgg | OK | Crypto |No | last and volume (in quote currency) from CEX ticker 
 CoinGecko | OK | Crypto | No | volume weighted price, sum of market volume.
 Coinmarketcap | Warn | Crypto | No | volume weighted average of all prices reported at each market, volume in USD, 5 minutes delay (see https://coinmarketcap.com/faq/). V1 API will be closed December 4th, 2018. 
 CoinmarketcapPro | OK | Crypto | Yes | volume weighted average of all prices reported at each market, volume in quote, 1 minutes delay. Use v2 api.
+Currate | OK | FIAT, BTC | Yes | ticker from api, require API KEY, no volume info, https://www.currate.ru
 Currencylayer | Fails, to be fixed | FIAT, BTC | Yes | ticker from api, only USD as base and hourly updated with free subscription, no volume info. From various source (https://currencylayer.com/faq)
 CoinTiger | OK | Crypto | No | last and volume (in quote currency) from summary api (bulk)
 Fixer | OK | FIAT | Yes |  Very similar to CurrencyLayer, ticker from api, daily from European Central Bank, only EUR with free subscription, no volume info.
 Graphene | OK | Crypto, FIAT, Stocks | No | last and volume (in quote currency) from Bitshares DEX in realtime
+Goldprice | OK | Gold, Silver | No | last prices (no volume info)
 Huobi | OK | Crypto | No | close price and volume (in quote currency) from CEX API in realtime
 IEX  | Fails, to be fixed | Stocks | No | last ("IEX real time price", "15 minute delayed price", "Close" or "Previous close") and volume. 
 IndoDax | OK | Crypto | No | last and volume (in quote currency) from CEX ticker API.
@@ -156,6 +158,7 @@ Poloniex | OK | Crypto | No | last and volume (in quote currency) from CEX API i
 Quantl | OK | Commodities | Yes | daily price from London Bullion Market Association (LBMA), no volume
 RobinHood | Fails, to be fixed | Stocks | No | last, no volume, from unknown source in real time
 WorldCoinIndex | OK | Crypto | Yes| volume weighted price, sum of market volume.
+Yahoo | OK | FIAT, Commodities, Crypto, Stocks | No | https://finance.yahoo.com
 ZB | OK | Crypto | No |last and volume (in quote currency) from CEX API in realtime
 
 ### Special sources:

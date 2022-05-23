@@ -1,7 +1,6 @@
 import requests
 from . import FeedSource, _request_headers
 
-
 class Goldprice(FeedSource):
     def _fetch(self):
         feed = {}
@@ -15,5 +14,5 @@ class Goldprice(FeedSource):
                 r = r.json()
                 response = float(r[0].split(',')[1])
                 price_troyounce = response
-                self.add_rate(feed, base, quote, float(price_troyounce), float(11111))
+                self.add_rate(feed, base, quote, float(price_troyounce), 1.0)
         return feed
