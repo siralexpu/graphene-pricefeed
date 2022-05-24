@@ -119,9 +119,12 @@ exchanges:
           - EOS
           - LTC
           - BTS
+          - USDT
+          - EUR
       bases:
           - BTC
           - USDT
+          - RUB
 
   okcoin:
       klass: Okcoin
