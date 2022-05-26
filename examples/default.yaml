@@ -269,7 +269,7 @@ assets:
     USD:
     EUR:
     RUB:
-    #CNY:
+    CNY:
       #maximum_short_squeeze_ratio: 102.0
       #core_exchange_factor: 1.2
       #maintenance_collateral_ratio: 1.6
