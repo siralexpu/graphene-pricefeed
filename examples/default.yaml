@@ -126,6 +126,17 @@ exchanges:
           - USDT
           - RUB
 
+  coinbase:
+      klass: Coinbase
+      quotes:
+          - BTC
+          - EOS
+          - LTC
+          - USDT
+      bases:
+          - USD
+          - EUR
+
   okcoin:
       klass: Okcoin
       quotes:
@@ -231,6 +242,7 @@ default:
          -*
 #        - fixer
 #        - binance
+#        - coinbase
 #        - currencylayer
 #        - btcavg
 #        - quandl
