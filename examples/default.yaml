@@ -119,6 +119,7 @@ exchanges:
           - EOS
           - LTC
           - BTS
+          - TRX
           - USDT
           - EUR
       bases:
@@ -153,14 +154,16 @@ exchanges:
       - RUDEX.EOS
       - RUDEX.LTC
       - RUDEX.BTS
-      #- RUDEX.BTC
+      - RUDEX.TRX
+      - RUDEX.BTC
       #- USD
     aliases:
         RUDEX.USDT: USDT
         RUDEX.EOS: EOS
         RUDEX.LTC: LTC
         RUDEX.BTS: BTS
-        #RUDEX.BTC: BTC
+        RUDEX.TRX: TRX
+        RUDEX.BTC: BTC
 
 
   ####################################
@@ -313,7 +316,8 @@ intermediate_assets:
     - BTS
     - EOS
     - LTC
-    #- BTC
+    - TRX
+    - BTC
 
 # Historical computed prices storage, to be used in next runs to compute the moving average.
 #history:
